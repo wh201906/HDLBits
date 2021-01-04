@@ -1,8 +1,8 @@
 module top_module( 
     input [254:0] in,
-    output [7:0] out );
+    output reg [7:0] out );
 
-    reg [6:0] res0,res1,res2,res3;
+    wire [6:0] res0,res1,res2,res3;
 
     submodule2 mod0(
         .a(in[63:0]),
@@ -23,7 +23,7 @@ endmodule
 
 module submodule0(
     input [3:0] a,
-    output [2:0] b );
+    output reg [2:0] b );
     
     always@(*) begin
         case(a)
@@ -39,9 +39,9 @@ endmodule
 
 module submodule1(
     input [15:0] a,
-    output [4:0] b );
+    output reg [4:0] b );
 
-    reg [2:0] res0,res1,res2,res3;
+    wire [2:0] res0,res1,res2,res3;
 
     submodule0 mod0(
         .a(a[3:0]),
@@ -62,9 +62,9 @@ endmodule
 
 module submodule2(
     input [63:0] a,
-    output [6:0] b );
+    output reg [6:0] b );
 
-    reg [4:0] res0,res1,res2,res3;
+    wire [4:0] res0,res1,res2,res3;
 
     submodule1 mod0(
         .a(a[15:0]),
@@ -90,12 +90,18 @@ endmodule
 // 	output reg [7:0] out
 // );
 // 
-// 	always @(*) begin	// Combinational always block
-// 		out = 0;
-// 		for (int i=0;i<255;i++)
-// 			out = out + in[i];
-// 	end
+//     integer i;
+// 
+// 	   always @(*) begin	// Combinational always block
+// 	   	   out = 0;
+// 	   	   for (i=0;i<255;i=i+1)
+// 	   		   out = out + in[i];
+// 	   end
 // 	
 // endmodule
 
 // Fine.
+// In the RTL view, my solution partially goes parallel,
+// while the official solution is a lot of adders connected in series.
+// For all "b" in submodulex and "out" in top_module, they need to be declared as "output reg"(in my Quartus 18.1)
+// For "resx" in submodule 1~2 (no 0) and top_module, the need to be declared as "wire" rather than "reg"(in my Quartus 18.1)
