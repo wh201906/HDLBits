@@ -4,9 +4,19 @@ module top_module (
     output [7:0] s,
     output overflow
 ); //
-    reg [8:0] tmp;
-    assign tmp=a+b;
-    assign s=tmp[7:0];
-    assign s=tmp[8];
+    wire signa,signb;
+    // sigx==1 if x is a positive number
+    assign signa=~a[7];
+    assign signb=~b[7];
+    assign s=a+b;
+    
+    always@(*) begin
+        if(signa^signb)
+            // have different sign
+            overflow=1'b0;
+        else
+            // have same sign
+            overflow=~(signa^s[7]);
+    end
 
 endmodule
