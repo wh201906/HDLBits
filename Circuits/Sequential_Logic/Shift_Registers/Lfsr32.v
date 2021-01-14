@@ -3,6 +3,8 @@ module top_module(
     input reset,    // Active-high synchronous reset to 32'h1
     output [31:0] q
 ); 
+    // taps are at 32, 22, 2 ant 1
+    // tap is count from 1 to 32
     reg[31:0] tapList;
     assign tapList[31]=q[0];
     assign tapList[30:22]=9'd0;
@@ -15,6 +17,6 @@ module top_module(
         if(reset)
             q<=32'h1;
         else
-            q<={q[0],q[31:1]}^tapList;
+            q<={1'b0,q[31:1]}^tapList; // in LFSR, the MSB input is 1'b0
     end
 endmodule
