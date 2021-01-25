@@ -6,50 +6,47 @@ module top_module(
 
     reg [256*4-1:0] st;
 
+    reg [255:0] nbr1,nbr2,nbr3,nbr4,nbr5,nbr6,nbr7,nbr8;
+    assign nbr1={q[16:0],q[255:17]}; // wrong
+    assign nbr2={q[15:0],q[255:16]};
+    assign nbr3={q[14:0],q[255:15]}; // wrong
+    assign nbr4={q[0],q[255:1]}; //wrong
+    assign nbr5={q[255-1:0],q[255]}; //wrong
+    assign nbr6={q[255-15:0],q[255:255-14]}; //wrong
+    assign nbr7={q[255-16:0],q[255:255-15]}; 
+    assign nbr8={q[255-17:0],q[255:255-16]}; //wrong
+
+
     generate
         genvar i;
         for(i=0;i<256;i=i+1) begin:gfor
-            adder8 adder8Inst(
-                .in({q[i+1],q[i-1],q[i+15],q[i+16],q[i+17],q[i-15],q[i-16],q[i-17]}),
-                .out(st[i*4+3:i*4])
+            assign st[i*4+3:i*4]=nbr1[i]+nbr2[i]+nbr3[i]+nbr4[i]+nbr5[i]+nbr6[i]+nbr7[i]+nbr8[i];
+            judge judgeInst(
+                .clk(clk),
+                .load(load),
+                .data(data[i]),
+                .st(st[i*4+3:i*4]),
+                .q(q[i])
             );
         end
     endgenerate
-    adder8 add(
-        .in(8'b0),
-        .out(q[7:0])
-    );
 
+endmodule
+
+module judge(
+    input clk,load,data,
+    input [3:0] st,
+    output q
+);
     always@(posedge clk) begin
         if(load)
             q<=data;
-    end
-endmodule
-
-module adder2(
-    input [1:0] in,
-    output [1:0] out
-);
-    assign out[0]=in[0]^in[1];
-    assign out[1]=in[0]&in[1];
-endmodule
-
-module adder8(
-    input [7:0] in,
-    output [3:0] out
-);
-
-    reg [7:0] o;
-    generate
-        genvar i;
-        for(i=0;i<4;i=i+1) begin:gfor
-            adder2 adder2Inst(
-                .in(in[i*2+1:i*2]),
-                .out(o[i*2+1:i*2])
-            );
+        else begin
+            case(st)
+                4'd2:q<=q;
+                4'd3:q<=1'b1;
+                default:q<=1'b0;
+            endcase
         end
-    endgenerate
-
-    assign out=o[1:0]+o[3:2]+o[5:4]+o[7:6];
-
+    end
 endmodule

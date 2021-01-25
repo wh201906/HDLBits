@@ -23,7 +23,7 @@ module top_module(clk, reset, in, out);
             endcase
 
             // State flip-flops
-            present_state = next_state;   
+            present_state <= next_state;   
 
             case (present_state)
                 // Fill in output logic
