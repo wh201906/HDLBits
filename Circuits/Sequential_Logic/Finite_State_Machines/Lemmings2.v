@@ -13,8 +13,8 @@ module top_module(
 
     always @(*) begin
         case(currDirection)
-            walkLeft:nextDirection=(bump_left&&hasGround)?walkRight:walkLeft;
-            walkRight:nextDirection=(bump_right&&hasGround)?walkLeft:walkRight;
+            walkLeft:nextDirection=(bump_left&&hasGround&&ground)?walkRight:walkLeft;
+            walkRight:nextDirection=(bump_right&&hasGround&&ground)?walkLeft:walkRight;
         endcase
     end
 
